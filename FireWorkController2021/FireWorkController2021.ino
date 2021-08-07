@@ -10,7 +10,7 @@
 // The global timer used to play the show
 unsigned long timer = 0;  
 
-// Memory structure to store the pin and output ignote time
+// Memory structure to store the pin and output ignite time
 typedef struct 
 {
   int pin;
