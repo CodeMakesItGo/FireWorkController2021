@@ -59,14 +59,24 @@ output outputs[NUM_OUTPUTS] =
    {53, 16000}  // OUTPUT 32
 };
 
+//comment out the next line if your relays are active LOW
+#define ACTIVE_HIGH
+
+#ifdef ACTIVE_HIGH
+#define ACTIVE HIGH
+#define INACTIVE LOW
+#else
+#define ACTIVE LOW
+#define INACTIVE HIGH
+#endif
+
 // Turn off all outputs
 void allOff()
 {
   //Turn off all outputs
   for( int i = 0; i < NUM_OUTPUTS; i++) 
   {
-      // Relays are active low, set high to turn off
-      digitalWrite(outputs[i].pin, HIGH);
+      digitalWrite(outputs[i].pin, INACTIVE);
   }
 }
 
@@ -80,7 +90,7 @@ void playShow()
         timer < (unsigned long)(outputs[i].igniteTime + STAY_ON_DURATION_MS) )
     {
       //Check if it is currently off
-       if(digitalRead(outputs[i].pin) == HIGH)
+       if(digitalRead(outputs[i].pin) == INACTIVE)
        {
         Serial.print("Output ");
         Serial.print(outputs[i].pin);
@@ -88,12 +98,12 @@ void playShow()
        }
        
        //Turn output on
-       digitalWrite(outputs[i].pin, LOW);
+       digitalWrite(outputs[i].pin, ACTIVE);
     }
     else
     {
       //Check if it is currently on
-      if(digitalRead(outputs[i].pin) == LOW)
+      if(digitalRead(outputs[i].pin) == ACTIVE)
        {
         Serial.print("Output ");
         Serial.print(outputs[i].pin);
@@ -101,7 +111,7 @@ void playShow()
        }
        
       //Turn output off
-      digitalWrite(outputs[i].pin, HIGH);
+      digitalWrite(outputs[i].pin, INACTIVE);
     }
   }
 }
@@ -114,9 +124,7 @@ void setup()
   for( int i = 0; i < NUM_OUTPUTS; i++) 
   {
       pinMode(outputs[i].pin, OUTPUT);
-      
-      // Relays are active low, set high to turn off
-      digitalWrite(outputs[i].pin, HIGH);
+      digitalWrite(outputs[i].pin, INACTIVE);
   }
 
   // This is an analog input pin
@@ -136,6 +144,7 @@ void loop()
   {
     // Reset our frequency timer
     current_time = millis();
+
     
     if(digitalRead(START_PIN) == HIGH)
     {
